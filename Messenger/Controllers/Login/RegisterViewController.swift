@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegisterViewController: UIViewController {
     
@@ -183,7 +184,30 @@ class RegisterViewController: UIViewController {
         }
         
         // 파이어베이스 로그인
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { [weak self] authDataResult, error in
+            guard let result = authResult, error == nil else {
+                print("Error creating user")
+                return
+            }
+            
+            let user = result.user
+            print("creat : \(user)")
+            
+            self?.alertCreatUser()
+            
+        })
     }
+    
+    func alertCreatUser() {
+        let alert = UIAlertController(title: "Create", message: "make user", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
     
     func alertUserRegisterError() {
         let alert = UIAlertController(title: "Woops",
