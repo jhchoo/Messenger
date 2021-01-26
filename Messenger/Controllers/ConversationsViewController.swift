@@ -21,11 +21,6 @@ class ConversationsViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        do {
-//            try FirebaseAuth.Auth.auth().signOut()
-//        } catch {
-//
-//        }
         validateAuth()
     }
     
