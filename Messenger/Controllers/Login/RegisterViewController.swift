@@ -18,7 +18,7 @@ class RegisterViewController: UIViewController {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
         imageView.layer.masksToBounds = true
@@ -183,19 +183,39 @@ class RegisterViewController: UIViewController {
             return
         }
         
-        // 파이어베이스 로그인
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { [weak self] authDataResult, error in
-            guard let result = authResult, error == nil else {
-                print("Error creating user")
+        // 사용자가 존재 하는지 체크
+        DatabaseManager.shared.userExists(with: email) { [weak self] (exists) in
+            guard !exists else {
+                self?.alertUserLoginError(message: "존재하는 아이디 이다.")
                 return
             }
             
-            let user = result.user
-            print("creat : \(user)")
-            
-            self?.alertCreatUser()
-            
-        })
+            // 파이어베이스 로그인
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { [weak self] authDataResult, error in
+                guard let result = authDataResult, error == nil else {
+                    print("Error creating user")
+                    return
+                }
+                
+                let user = result.user
+                print("creat : \(user)")
+                
+                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName,
+                                                                    lastName: lastName,
+                                                                    emailAddress: email))
+                
+                self?.alertCreatUser()
+            })
+        }
+        
+    }
+    
+    func alertUserLoginError(message: String = "Please enter all information to log in") {
+        let alert = UIAlertController(title: "Woops", message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
     }
     
     func alertCreatUser() {

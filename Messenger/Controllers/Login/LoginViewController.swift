@@ -117,12 +117,12 @@ class LoginViewController: UIViewController {
 
         guard  let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty
                , password.count >= 6 else {
-            alertUserLoginError()
+            alertUserLoginError( )
             return
         }
         
         // 파이어베이스 로그인
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { (authDataResult, error) in
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] (authDataResult, error) in
             guard let result = authDataResult, error == nil else {
                 print("Error")
                 return
@@ -130,11 +130,14 @@ class LoginViewController: UIViewController {
             
             let user = result.user
             print("usre = \(user)")
+            // 성공하면  dismiss 한다.
+            
+            self?.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
     
-    func alertUserLoginError() {
-        let alert = UIAlertController(title: "Woops", message: "Please enter all information to log in", preferredStyle: .alert)
+    func alertUserLoginError(message: String = "Please enter all information to log in") {
+        let alert = UIAlertController(title: "Woops", message: message, preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         
