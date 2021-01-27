@@ -184,7 +184,7 @@ class RegisterViewController: UIViewController {
         }
         
         // 사용자가 존재 하는지 체크
-        DatabaseManager.shared.userExists(with: email) { [weak self] (exists) in
+        DatabaseManager.shared.userExists(with: email, provider: "email") { [weak self] (exists) in
             guard !exists else {
                 self?.alertUserLoginError(message: "존재하는 아이디 이다.")
                 return
@@ -200,7 +200,8 @@ class RegisterViewController: UIViewController {
                 let user = result.user
                 print("creat : \(user)")
                 
-                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName,
+                DatabaseManager.shared.insertUser(with: ChatAppUser(provider: "email",
+                                                                    firstName: firstName,
                                                                     lastName: lastName,
                                                                     emailAddress: email))
                 

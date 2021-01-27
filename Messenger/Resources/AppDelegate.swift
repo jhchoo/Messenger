@@ -8,15 +8,22 @@
 import UIKit
 import Firebase
 import FBSDKCoreKit
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+        // 구글 로그인
+        GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance()?.delegate = self
         
+        // 페이스북
         ApplicationDelegate.shared.application(
             application,
             didFinishLaunchingWithOptions: launchOptions
@@ -31,14 +38,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
+        // 페이스북
         ApplicationDelegate.shared.application(
             application,
             open: url,
             sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
             annotation: options[UIApplication.OpenURLOptionsKey.annotation]
         )
+        
+        // 구글 로그인
+        GIDSignIn.sharedInstance().handle(url)
+        
+        return true
     }
-    
+        
     // MARK: UISceneSession Lifecycle
     
     func application(_ application: UIApplication,
@@ -58,3 +71,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 }
 
+extension AppDelegate: GIDSignInDelegate {
+    // 구글 로그인
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        guard error == nil else {
+            if let error = error {
+                print("Failed to sign in with Google \(error)")
+            }
+            return
+        }
+        
+        guard let authentication = user.authentication else {
+            print("구글 유저가 없다.")
+            return
+        }
+        
+        guard  let email = user.profile.email,
+               let firstName = user.profile.givenName,
+               let lastName = user.profile.familyName else {
+            return
+        }
+        DatabaseManager.shared.userExists(with: email, provider: "Google") { (exists) in
+            if !exists {
+                DatabaseManager.shared.insertUser(with: ChatAppUser(provider: "Google",
+                                                                    firstName: firstName,
+                                                                    lastName: lastName,
+                                                                    emailAddress: email))
+            }
+        }
+        
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                          accessToken: authentication.accessToken)
+        
+        FirebaseAuth.Auth.auth().signIn(with: credential) { (authResult, error) in
+            guard let result = authResult, error == nil else {
+                print("Error")
+                return
+            }
+            
+            let user = result.user
+            print("로그인 성공 usre = \(user)")
+            NotificationCenter.default.post(name: .didLoginNotification, object: nil)
+        }
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        print("google user was disconnect")
+    }
+}

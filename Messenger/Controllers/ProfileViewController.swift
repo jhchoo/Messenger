@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
+import GoogleSignIn
 
 class ProfileViewController: UIViewController {
 
@@ -54,7 +56,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         alert.addAction(UIAlertAction(title: "Log out", style: .destructive, handler: { [weak self] _ in
             
             do {
+                // 파이어베이스 로그아웃
                 try FirebaseAuth.Auth.auth().signOut()
+                
+                // 페이스북 로그아웃 시킴
+                FBSDKLoginKit.LoginManager().logOut() // this is an instance function
+                
+                // 구글 로그아웃
+                GIDSignIn.sharedInstance()?.signOut()
                 
                 let vc = LoginViewController()
                 let nav = UINavigationController(rootViewController: vc)

@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     
@@ -73,8 +74,20 @@ class LoginViewController: UIViewController {
         return button
     }()
 
+    private let signInButton = GIDSignInButton()
+    
+    private var loginObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLoginNotification, object: nil, queue: .main) { [weak self] (notification) in
+            // 로그인 성공하면  dismiss 한다.
+            self?.navigationController?.dismiss(animated: true, completion: nil)
+        }
+        
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+        
         title = "Log In"
         view.backgroundColor = .white
         
@@ -97,6 +110,14 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookButton)
+        scrollView.addSubview(signInButton)
+    }
+    
+    deinit {
+        print("loginObserver deinit")
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -123,6 +144,10 @@ class LoginViewController: UIViewController {
                                  y: loginButton.bottom + 20,
                                  width: scrollView.width - 60,
                                  height: 52)
+        signInButton.frame = CGRect(x: 30,
+                                 y: facebookButton.bottom + 10,
+                                 width: scrollView.width - 60,
+                                 height: 52)
     }
     
     @objc private func loginButtonTapped() {
@@ -137,8 +162,8 @@ class LoginViewController: UIViewController {
         }
         
         // 파이어베이스 로그인
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] (authDataResult, error) in
-            guard let result = authDataResult, error == nil else {
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] (authResult, error) in
+            guard let result = authResult, error == nil else {
                 print("Error")
                 return
             }
@@ -202,15 +227,25 @@ extension LoginViewController: LoginButtonDelegate {
             
             print("\(result)")
             
-            DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: result["first_name"] as? String ?? "",
-                                                                lastName: result["last_name"] as? String ?? "",
-                                                                emailAddress: result["email"] as? String ?? ""))
+            let email = result["email"] as? String ?? ""
+            
+            DatabaseManager.shared.userExists(with: email, provider: "facebook") { (exists) in
+                guard !exists else {
+                    return
+                }
+                DatabaseManager.shared.insertUser(with: ChatAppUser(provider: "facebook",
+                                                                    firstName: result["first_name"] as? String ?? "",
+                                                                    lastName: result["last_name"] as? String ?? "",
+                                                                    emailAddress: email))
+            }
             
             let credential = FacebookAuthProvider.credential(withAccessToken: token)
             
             FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] (authDataResult, error) in
                 guard let result = authDataResult, error == nil else {
-                    print("Error 페이스북 로그인")
+                    if let error = error {
+                        print("Error 페이스북 로그인 \(error)")
+                    }
                     return
                 }
                 
