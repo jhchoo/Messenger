@@ -17,17 +17,19 @@ final class DatabaseManager {
 // MARK: 사용자 매니저
 extension DatabaseManager {
     
-    public func userExists (with email: String, complition: @escaping((Bool) -> Void)) {
+    public func userExists(with email: String, provider: String, complition: @escaping((Bool) -> Void)) {
         
         var safeEmail = email.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
+        safeEmail = "\(provider)-\(safeEmail)"
         
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
-            guard snapshot.value != nil else {
+            
+            if snapshot.value == nil || snapshot.value as! NSObject == NSNull() {
                 complition(false)
-                return
+            } else {
+                complition(true)
             }
-            complition(true)
         })
 
     }
@@ -43,6 +45,7 @@ extension DatabaseManager {
 
 
 struct ChatAppUser {
+    let provider: String
     let firstName: String
     let lastName: String
     let emailAddress: String
@@ -50,6 +53,7 @@ struct ChatAppUser {
     var safeEmail: String {
         var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
+        safeEmail = "\(provider)-\(safeEmail)"
         return safeEmail
     }
 }
