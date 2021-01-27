@@ -20,9 +20,9 @@
 		9E336A8225BE651D003A487F /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E336A8125BE651D003A487F /* VideoPlayerViewController.swift */; };
 		9E336A8525BE6533003A487F /* NewConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E336A8425BE6533003A487F /* NewConversationViewController.swift */; };
 		9E336A8825BE6546003A487F /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E336A8725BE6546003A487F /* ProfileViewController.swift */; };
+		9E7A141425C1028F00331BFC /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7A141325C1028F00331BFC /* DatabaseManager.swift */; };
 		9EAAF72425BE8007002C1FC5 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAAF72325BE8007002C1FC5 /* Extentions.swift */; };
 		9EB54E6625BF93DB000E4AEB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9EB54E6525BF93DB000E4AEB /* GoogleService-Info.plist */; };
-		9EB54E7A25BFD3F4000E4AEB /* DatabaseManager1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB54E7925BFD3F4000E4AEB /* DatabaseManager1.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,9 +41,9 @@
 		9E336A8125BE651D003A487F /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		9E336A8425BE6533003A487F /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		9E336A8725BE6546003A487F /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		9E7A141325C1028F00331BFC /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		9EAAF72325BE8007002C1FC5 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		9EB54E6525BF93DB000E4AEB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		9EB54E7925BFD3F4000E4AEB /* DatabaseManager1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager1.swift; sourceTree = "<group>"; };
 		E8943678E45CC765E795D53E /* Pods_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED03F78F0821D57CA5F8DD9C /* Pods-Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.debug.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -148,10 +148,10 @@
 		9E336A7425BE63B1003A487F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9E7A141325C1028F00331BFC /* DatabaseManager.swift */,
 				9E336A5B25BE6185003A487F /* AppDelegate.swift */,
 				9E336A5D25BE6185003A487F /* SceneDelegate.swift */,
 				9EAAF72325BE8007002C1FC5 /* Extentions.swift */,
-				9EB54E7925BFD3F4000E4AEB /* DatabaseManager1.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -314,10 +314,10 @@
 				9E336A6025BE6185003A487F /* ConversationsViewController.swift in Sources */,
 				9E336A8225BE651D003A487F /* VideoPlayerViewController.swift in Sources */,
 				9E336A5C25BE6185003A487F /* AppDelegate.swift in Sources */,
+				9E7A141425C1028F00331BFC /* DatabaseManager.swift in Sources */,
 				9E336A8825BE6546003A487F /* ProfileViewController.swift in Sources */,
 				9E336A5E25BE6185003A487F /* SceneDelegate.swift in Sources */,
 				9E336A7F25BE650F003A487F /* PhotoViewerViewController.swift in Sources */,
-				9EB54E7A25BFD3F4000E4AEB /* DatabaseManager1.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
