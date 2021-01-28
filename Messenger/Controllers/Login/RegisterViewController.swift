@@ -7,8 +7,11 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
+    
+    private let spinner = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -183,15 +186,23 @@ class RegisterViewController: UIViewController {
             return
         }
         
+        spinner.show(in: view)
+        
         // 사용자가 존재 하는지 체크
         DatabaseManager.shared.userExists(with: email, provider: "email") { [weak self] (exists) in
             guard !exists else {
+                DispatchQueue.main.async {
+                    self?.spinner.dismiss()
+                }
                 self?.alertUserLoginError(message: "존재하는 아이디 이다.")
                 return
             }
             
             // 파이어베이스 로그인
             FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { [weak self] authDataResult, error in
+                DispatchQueue.main.async {
+                    self?.spinner.dismiss()
+                }
                 guard let result = authDataResult, error == nil else {
                     print("Error creating user")
                     return
