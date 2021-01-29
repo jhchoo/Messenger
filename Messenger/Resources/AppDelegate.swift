@@ -91,9 +91,13 @@ extension AppDelegate: GIDSignInDelegate {
                let lastName = user.profile.familyName else {
             return
         }
-        DatabaseManager.shared.userExists(with: email, provider: "Google") { (exists) in
+        // 이메일 저장
+        UserDefaults.standard.set("google", forKey: "provider")
+        UserDefaults.standard.set(email, forKey: "email")
+        
+        DatabaseManager.shared.userExists(with: email, provider: "google") { (exists) in
             if !exists {
-                let chatUser = ChatAppUser(provider: "Google",
+                let chatUser = ChatAppUser(provider: "google",
                                            firstName: firstName,
                                            lastName: lastName,
                                            emailAddress: email)

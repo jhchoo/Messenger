@@ -181,6 +181,10 @@ class LoginViewController: UIViewController {
             print("usre = \(user)")
             // 성공하면  dismiss 한다.
             
+            // 이메일 저장
+            UserDefaults.standard.set("email", forKey: "provider")
+            UserDefaults.standard.set(email, forKey: "email")
+            
             self?.navigationController?.dismiss(animated: true, completion: nil)
         }
     }
@@ -243,6 +247,9 @@ extension LoginViewController: LoginButtonDelegate {
                 print("not found image")
                 return
             }
+            // 이메일 저장
+            UserDefaults.standard.set("facebook", forKey: "provider")
+            UserDefaults.standard.set(email, forKey: "email")
             
             DatabaseManager.shared.userExists(with: email, provider: "facebook") { (exists) in
                 guard !exists else {

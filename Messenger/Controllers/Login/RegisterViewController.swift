@@ -225,15 +225,13 @@ class RegisterViewController: UIViewController {
                         }
                         
                         let fileName = chatUser.profilePictureFileName
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Container@*/VStack/*@END_MENU_TOKEN@*/ {
-                            StorageManager.shared.uploadProfilePickture(with: data, fileName: fileName) { result in
-                                switch result {
-                                case .success(let downloadUrl):
-                                    UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
-                                    print("downloadUrl")
-                                case .failure(let error):
-                                    print("downloadUrl error \(error)")
-                                }
+                        StorageManager.shared.uploadProfilePickture(with: data, fileName: fileName) { result in
+                            switch result {
+                            case .success(let downloadUrl):
+                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                print("downloadUrl")
+                            case .failure(let error):
+                                print("downloadUrl error \(error)")
                             }
                         }
                     }
