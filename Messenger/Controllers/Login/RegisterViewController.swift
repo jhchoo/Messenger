@@ -211,10 +211,33 @@ class RegisterViewController: UIViewController {
                 let user = result.user
                 print("creat : \(user)")
                 
-                DatabaseManager.shared.insertUser(with: ChatAppUser(provider: "email",
-                                                                    firstName: firstName,
-                                                                    lastName: lastName,
-                                                                    emailAddress: email))
+                // 사용자를 생성하고
+                let chatUser = ChatAppUser(provider: "email",
+                                           firstName: firstName,
+                                           lastName: lastName,
+                                           emailAddress: email)
+                DatabaseManager.shared.insertUser(with: chatUser) { success in
+                    // 생성이 완료되면 추가.
+                    if success {
+                        guard let image = self?.imageView.image,
+                              let data = image.resizeImage(targetSize: CGSize(width: 200, height: 200)).pngData() else {
+                            return
+                        }
+                        
+                        let fileName = chatUser.profilePictureFileName
+                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Container@*/VStack/*@END_MENU_TOKEN@*/ {
+                            StorageManager.shared.uploadProfilePickture(with: data, fileName: fileName) { result in
+                                switch result {
+                                case .success(let downloadUrl):
+                                    UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                    print("downloadUrl")
+                                case .failure(let error):
+                                    print("downloadUrl error \(error)")
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 self?.alertCreatUser()
             })

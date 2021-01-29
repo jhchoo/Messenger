@@ -93,10 +93,38 @@ extension AppDelegate: GIDSignInDelegate {
         }
         DatabaseManager.shared.userExists(with: email, provider: "Google") { (exists) in
             if !exists {
-                DatabaseManager.shared.insertUser(with: ChatAppUser(provider: "Google",
-                                                                    firstName: firstName,
-                                                                    lastName: lastName,
-                                                                    emailAddress: email))
+                let chatUser = ChatAppUser(provider: "Google",
+                                           firstName: firstName,
+                                           lastName: lastName,
+                                           emailAddress: email)
+                DatabaseManager.shared.insertUser(with: chatUser) { success in
+                    // 생성이 완료되면 추가.
+                    if success {
+                        if user.profile.hasImage {
+                            guard let url = user.profile.imageURL(withDimension: 200) else {
+                                return
+                            }
+                            
+                            URLSession.shared.dataTask(with: url) { (data, _, _) in
+                                guard let data = data else {
+                                    print("fail download facebook image")
+                                    return
+                                }
+                                
+                                let fileName = chatUser.profilePictureFileName
+                                StorageManager.shared.uploadProfilePickture(with: data, fileName: fileName) { result in
+                                    switch result {
+                                    case .success(let downloadUrl):
+                                        UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                        print("downloadUrl")
+                                    case .failure(let error):
+                                        print("downloadUrl error \(error)")
+                                    }
+                                }
+                            }.resume()
+                        }
+                    }
+                }
             }
         }
         

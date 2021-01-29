@@ -12,6 +12,9 @@ target 'Messenger' do
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
+  pod 'Firebase/Storage'
+  
+  
   # 페이스북 로그인
   pod 'FBSDKLoginKit'
   # 구글 로그인
